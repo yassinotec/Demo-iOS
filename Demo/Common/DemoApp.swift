@@ -12,7 +12,6 @@ struct DemoApp: App {
 	var body: some Scene {
 		WindowGroup {
 			ContentView()
-//				.accentColor(.init(red: 77, green: 116, blue: 217))
 		}
 	}
 }

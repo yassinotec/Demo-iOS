@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,6 +13,8 @@
 		C24596CA26097FF3003B9557 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C24596C926097FF3003B9557 /* Preview Assets.xcassets */; };
 		C24596D526097FF4003B9557 /* DemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24596D426097FF4003B9557 /* DemoTests.swift */; };
 		C24596E026097FF4003B9557 /* DemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24596DF26097FF4003B9557 /* DemoUITests.swift */; };
+		C24596F5260980D4003B9557 /* dummy-data.json in Resources */ = {isa = PBXBuildFile; fileRef = C24596F4260980D4003B9557 /* dummy-data.json */; };
+		C25FBD58260994FF0025A055 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25FBD57260994FF0025A055 /* DetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +47,8 @@
 		C24596DB26097FF4003B9557 /* DemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C24596DF26097FF4003B9557 /* DemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoUITests.swift; sourceTree = "<group>"; };
 		C24596E126097FF4003B9557 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C24596F4260980D4003B9557 /* dummy-data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = "dummy-data.json"; path = "../../../dummy-data.json"; sourceTree = "<group>"; };
+		C25FBD57260994FF0025A055 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,8 +99,10 @@
 		C24596C126097FF0003B9557 /* Demo */ = {
 			isa = PBXGroup;
 			children = (
+				C24596F326098072003B9557 /* Assets */,
 				C24596C226097FF0003B9557 /* DemoApp.swift */,
 				C24596C426097FF0003B9557 /* ContentView.swift */,
+				C25FBD57260994FF0025A055 /* DetailView.swift */,
 				C24596C626097FF3003B9557 /* Assets.xcassets */,
 				C24596CB26097FF3003B9557 /* Info.plist */,
 				C24596C826097FF3003B9557 /* Preview Content */,
@@ -128,6 +134,14 @@
 				C24596E126097FF4003B9557 /* Info.plist */,
 			);
 			path = DemoUITests;
+			sourceTree = "<group>";
+		};
+		C24596F326098072003B9557 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				C24596F4260980D4003B9557 /* dummy-data.json */,
+			);
+			path = Assets;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -194,6 +208,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 1240;
 				LastUpgradeCheck = 1240;
+				ORGANIZATIONNAME = "Demo Inc.";
 				TargetAttributes = {
 					C24596BE26097FF0003B9557 = {
 						CreatedOnToolsVersion = 12.4;
@@ -209,7 +224,7 @@
 				};
 			};
 			buildConfigurationList = C24596BA26097FF0003B9557 /* Build configuration list for PBXProject "Demo" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -235,6 +250,7 @@
 			files = (
 				C24596CA26097FF3003B9557 /* Preview Assets.xcassets in Resources */,
 				C24596C726097FF3003B9557 /* Assets.xcassets in Resources */,
+				C24596F5260980D4003B9557 /* dummy-data.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,6 +276,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C24596C526097FF0003B9557 /* ContentView.swift in Sources */,
+				C25FBD58260994FF0025A055 /* DetailView.swift in Sources */,
 				C24596C326097FF0003B9557 /* DemoApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -430,7 +447,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = me.elbadaoui.Demo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -452,7 +469,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = me.elbadaoui.Demo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

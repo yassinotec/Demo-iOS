@@ -78,9 +78,7 @@
 		C2B0B755260BA0190033C236 /* Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
 		C2B0B760260C2A430033C236 /* Localizable.stringsdict */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.stringsdict; path = Localizable.stringsdict; sourceTree = "<group>"; };
 		C2B0B79A260C35C80033C236 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		C2B0B79B260C35D20033C236 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		C2B0B79D260C35DA0033C236 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		C2B0B7A2260C35DE0033C236 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -325,7 +323,6 @@
 			knownRegions = (
 				en,
 				Base,
-				ja,
 			);
 			mainGroup = C24596B626097FF0003B9557;
 			productRefGroup = C24596C026097FF0003B9557 /* Products */;
@@ -428,7 +425,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				C2B0B79A260C35C80033C236 /* en */,
-				C2B0B79B260C35D20033C236 /* ja */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -437,7 +433,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				C2B0B79D260C35DA0033C236 /* en */,
-				C2B0B7A2260C35DE0033C236 /* ja */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";

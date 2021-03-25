@@ -16,6 +16,12 @@ struct Constants {
 				 price: 100,
 				 keywords: ["red", "versatile", "inexpensive"])
 	
+	/// Item.
+	static let bulkyItem =
+		Item(name: "First Item",
+				 price: 100,
+				 keywords: ["red", "versatile", "inexpensive", "yellow", "interesting", "available", "green", "doorway", "out-of-stock", "bulky"])
+	
 	/// Items.
 	static let items = [
 		Item(name: "First Item",

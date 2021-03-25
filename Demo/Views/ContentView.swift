@@ -10,7 +10,7 @@ import SwiftUI
 struct ContentView: View {
 	
 	@StateObject private var viewModel = ViewModel()
-
+	
 	var body: some View {
 		NavigationView {
 			List(viewModel.items, id: \.self) { item in
@@ -26,6 +26,9 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
 	static var previews: some View {
-		ContentView()
+		ForEach(
+			ColorScheme.allCases,
+			id: \.self,
+			content: ContentView().preferredColorScheme)
 	}
 }

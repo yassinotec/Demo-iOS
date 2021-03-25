@@ -11,7 +11,7 @@ import SwiftUI
 struct DetailView: View {
 	/// Item.
 	var item: Item
-
+	
 	/// Currency formatter.
 	var currencyFormatter: NumberFormatter = {
 		let formatter = NumberFormatter()
@@ -25,56 +25,52 @@ struct DetailView: View {
 	var formattedPrice: String {
 		currencyFormatter.string(from: NSNumber(value: Double(item.price))) ?? "$0"
 	}
-	var body: some View {
-		List {
-			StringRow(name: "Name", value: item.name)
-			StringRow(name: "Price", value: formattedPrice)
-			CollectionRow(name: "Keywords", values: item.keywords)
+	
+	var priceView: some View {
+		VStack {
+			Text("Price")
+				.font(.itemTitle)
+			Text(formattedPrice)
+				.font(.valueTitle)
 		}
 	}
-}
-
-struct DetailView_Previews: PreviewProvider {
-	/// Item.
-	static let item = Item(
-		name: "First Item",
-		price: 100,
-		keywords: ["red", "versatile", "inexpensive"]
-	)
-	static var previews: some View {
-		DetailView(item: item)
-	}
-}
-
-struct StringRow: View {
-	var name: String
-	var value: String
 	
-	var body: some View {
-		HStack {
-			Text(name)
-			Spacer()
-			Text(value)
-		}
-	}
-}
-
-struct CollectionRow: View {
-	var name: String
-	var values: [String]
-	private let tint = Color(.sRGB, red: 77, green: 116, blue: 217, opacity: 1)
+	let columns: [GridItem] =
+		Array(repeating: .init(.flexible()), count: 3)
 	
-	var body: some View {
-		HStack {
-			Text(name)
-			Spacer()
-			VStack {
-				ForEach(values, id: \.self) { value in
+	var keywordsView: some View {
+		VStack {
+			Text("Keywords")
+				.font(.itemTitle)
+			LazyVGrid(columns: columns, spacing: 10) {
+				ForEach(item.keywords, id: \.self) { value in
 					Text(value)
-//						.padding()
-						.background(tint)
+						.padding(.horizontal)
+						.foregroundColor(.white)
+						.background(Color.blue)
+						.clipShape(Capsule())
 				}
 			}
 		}
 	}
+	
+	var body: some View {
+		VStack {
+			priceView
+			Spacer()
+				.frame(height: 20)
+			keywordsView
+		}
+		.navigationBarTitle(Text(item.name), displayMode: .inline)
+	}
 }
+
+struct DetailView_Previews: PreviewProvider {
+	static var previews: some View {
+		ForEach(
+			ColorScheme.allCases,
+			id: \.self,
+			content: DetailView(item: Constants.bulkyItem).preferredColorScheme)
+	}
+}
+

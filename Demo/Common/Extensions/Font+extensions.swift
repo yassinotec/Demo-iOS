@@ -3,7 +3,7 @@
 //  Demo
 //
 //  Created by Yassine ElBadaoui on 2021/03/25.
-//  Copyright © 2021 Demo Inc. All rights reserved.
+//  Copyright © 2021 TORANOTEC K.K. All rights reserved.
 //
 
 import SwiftUI

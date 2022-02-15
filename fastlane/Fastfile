@@ -25,7 +25,7 @@ default_platform(:ios)
 # #app channel webhook
 default_slack_channel = '#ios-notifications'
 # #sandbox channel webhook
-default_slack_channel_webhook = 'https://hooks.slack.com/services/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'	#See Slack Incoming Webhook
+default_slack_channel_webhook = 'https://hooks.slack.com/services/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'	#See Slack Incoming Webhook
 APP_NAME = ENV['APP_NAME'].freeze
 LANGUAGE = ENV['LANGUAGE'].freeze
 XCODE_WORKSPACE = "#{ENV['XCODE_WORKSPACE']}.xcworkspace".freeze

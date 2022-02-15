@@ -51,6 +51,10 @@ jobs:
         env:
           PRIVATE_KEY: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
 
+      - name: Setup Fastlane API key JSON
+        run: |
+          echo "${API_KEY_INFO}" > "./fastlane/api_key_info.json"
+
       - run: make deploy
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}

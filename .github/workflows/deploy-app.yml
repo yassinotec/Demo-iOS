@@ -10,11 +10,8 @@ on:
 
 jobs:
   build:
-    runs-on: macOS-latest
+    runs-on: macos-latest
     steps:
-      - name: Select Xcode version
-        run: sudo xcode-select -s '/Applications/Xcode_12.3.app/Contents/Developer'
-
       - name: Show Xcode version
         run: xcodebuild -version
 

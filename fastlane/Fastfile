@@ -1,0 +1,342 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+# Enable the following line if normal app binary upload fails.
+# ENV['DELIVER_ITMSTRANSPORTER_ADDITIONAL_UPLOAD_PARAMETERS'] = '-t DAV'
+
+default_platform(:ios)
+
+######################
+# Constants
+######################
+
+# #app channel webhook
+default_slack_channel = '#ios-notifications'
+# #sandbox channel webhook
+default_slack_channel_webhook = 'https://hooks.slack.com/services/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'	#See Slack Incoming Webhook
+APP_NAME = ENV['APP_NAME'].freeze
+LANGUAGE = ENV['LANGUAGE'].freeze
+XCODE_WORKSPACE = "#{ENV['XCODE_WORKSPACE']}.xcworkspace".freeze
+XCODE_PROJECT = ENV['XCODE_PROJECT'].freeze
+XCODE_UITESTS_SCHEME = ENV['XCODE_UITESTS_SCHEME'].freeze
+XCODE_APP_SCHEME = ENV['XCODE_SCHEME'].freeze
+XCODE_TARGET = ENV['XCODE_TARGET'].freeze
+GIT_BRANCH = ENV['GIT_BRANCH']
+
+######################
+# Defaults
+######################
+DEFAULT_XCODE_TARGET = XCODE_TARGET.freeze
+DEFAULT_BUILD_TYPE = 'build'.freeze
+DEFAULT_DEPLOY_ENVIRONMENT = :dev
+
+######################
+# Variables
+######################
+DEPLOY_ENVIRONMENT = DEFAULT_DEPLOY_ENVIRONMENT
+
+######################
+# Main
+######################
+
+platform :ios do
+	before_all do
+		# Set enviroment variables
+		ENV['SLACK_URL'] = default_slack_channel_webhook
+		ENV['SCAN_SLACK_CHANNEL'] = default_slack_channel
+		ENV['FL_BUILD_NUMBER_PROJECT'] = XCODE_PROJECT
+		setup_circle_ci if ENV['IS_CIRCLECI']
+	end
+
+	before_each do
+	end
+
+	desc 'Generate new localized screenshots'
+	lane :screenshots do
+		capture_screenshots(workspace: XCODE_WORKSPACE, scheme: XCODE_UITESTS_SCHEME)
+	end
+
+	desc 'Create iOS app online'
+	lane :create_ios_app_online do
+		apple_id = CredentialsManager::AppfileConfig.try_fetch_value(:apple_id)
+		app_name = APP_NAME
+		language = LANGUAGE
+		create_app_online(
+			username: apple_id,
+			app_name: app_name,
+			language: language,
+
+			# Optional
+			# App services can be enabled during app creation
+			enable_services: {
+				# access_wifi: 'on',                        # Valid values: 'on', 'off'
+				# app_attest: 'on',                         # Valid values: 'on', 'off'
+				# app_group: 'on',                          # Valid values: 'on', 'off'
+				# apple_pay: 'on',                          # Valid values: 'on', 'off'
+				# associated_domains: 'on',                 # Valid values: 'on', 'off'
+				# auto_fill_credential: 'on',               # Valid values: 'on', 'off'
+				# car_play_audio_app: 'on',                 # Valid values: 'on', 'off'
+				# car_play_messaging_app: 'on',             # Valid values: 'on', 'off'
+				# car_play_navigation_app: 'on',            # Valid values: 'on', 'off'
+				# car_play_voip_calling_app: 'on',          # Valid values: 'on', 'off'
+				# class_kit: 'on',                          # Valid values: 'on', 'off'
+				# communication_notifications: 'on',        # Valid values: 'on', 'off'
+				# critical_alerts: 'on',                    # Valid values: 'on', 'off'
+				# custom_network_protocol: 'on',            # Valid values: 'on', 'off'
+				data_protection: 'complete',              # Valid values: 'complete', 'unlessopen', 'untilfirstauth', 'off'
+				# driver_kit_endpoint_security: 'on',       # Valid values: 'on', 'off'
+				# driver_kit_family_hid_device: 'on',       # Valid values: 'on', 'off'
+				# driver_kit_family_networking: 'on',       # Valid values: 'on', 'off'
+				# driver_kit_family_serial: 'on',           # Valid values: 'on', 'off'
+				# driver_kit_hid_event_service: 'on',       # Valid values: 'on', 'off'
+				# driver_kit_transport_hid: 'on',           # Valid values: 'on', 'off'
+				# driver_kit: 'on',                         # Valid values: 'on', 'off'
+				# extended_virtual_address_space: 'on',     # Valid values: 'on', 'off'
+				# file_provider_testing_mode: 'on',         # Valid values: 'on', 'off'
+				# fonts: 'on',                              # Valid values: 'on', 'off'
+				# game_center: 'ios',                       # Valid values: 'ios', 'macos', off'
+				# group_activities: 'on',                   # Valid values: 'on', 'off'
+				# health_kit_estimate_recalibration: 'on',  # Valid values: 'on', 'off'
+				# health_kit: 'on',                         # Valid values: 'on', 'off'
+				# hls_interstitial_preview: 'on',           # Valid values: 'on', 'off'
+				# home_kit: 'on',                           # Valid values: 'on', 'off'
+				# hotspot_helper: 'on',                     # Valid values: 'on', 'off'
+				# hotspot: 'on',                            # Valid values: 'on', 'off'
+				# icloud: 'xcode5_compatible',              # Valid values: 'xcode5_compatible', 'xcode6_compatible', 'off'
+				# in_app_purchase: 'on',                    # Valid values: 'on', 'off'
+				# inter_app_audio: 'on',                    # Valid values: 'on', 'off'
+				# low_latency_hls: 'on',                    # Valid values: 'on', 'off'
+				# managed_associated_domains: 'on',         # Valid values: 'on', 'off'
+				# maps: 'on',                               # Valid values: 'on', 'off'
+				multipath: 'on',                          # Valid values: 'on', 'off'
+				# multitasking_camera_access: 'on',         # Valid values: 'on', 'off'
+				# music_kit: 'on',                          # Valid values: 'on', 'off'
+				# network_extension: 'on',                  # Valid values: 'on', 'off'
+				# nfc_tag_reading: 'on',                    # Valid values: 'on', 'off'
+				# passbook: 'on',                           # Valid values: 'on', 'off' (deprecated)
+				# personal_vpn: 'on',                       # Valid values: 'on', 'off'
+				push_notification: 'on',                  # Valid values: 'on', 'off'
+				# sf_universal_link_api: 'on',              # Valid values: 'on', 'off'
+				# shazam_kit: 'on',                         # Valid values: 'on', 'off'
+				# sign_in_with_apple: 'on',                 # Valid values: 'on', 'off'
+				# siri_kit: 'on',                           # Valid values: 'on', 'off'
+				# system_extension: 'on',                   # Valid values: 'on', 'off'
+				# time_sensitive_notifications: 'on',       # Valid values: 'on', 'off'
+				# user_management: 'on',                    # Valid values: 'on', 'off'
+				# vp9_decoder: 'on',                        # Valid values: 'on', 'off'
+				# vpn_configuration: 'on',                  # Valid values: 'on', 'off' (deprecated)
+				# wallet: 'on',                             # Valid values: 'on', 'off'
+				# wireless_accessory: 'on',                 # Valid values: 'on', 'off'
+			}
+		)
+	end
+
+	def update_version_with(build_type)
+		# Decide how to increment version/build numbers.
+		case build_type
+		when 'build'
+			increment_build_number
+		else
+			increment_version_number(bump_type: build_type)
+			increment_build_number(build_number: '0')
+		end
+	end
+
+	def notify_and_slack_distribution(method)
+		message = "Successfully distributed #{get_version_string(XCODE_TARGET)} build through #{method}."
+		notification(subtitle: 'Finished Distribution',
+			message: message,
+			app_icon: './icon.png')
+		slack(message: message)
+	end
+
+	def get_version_string(target)
+		version = get_version_number(target: target)
+		build_number = get_build_number
+		version_string = "#{version} (#{build_number})"
+		return version_string
+	end
+
+	########## Lanes ##########
+
+	# Git related
+	desc 'Git operations ...'
+	private_lane :git_operations do |options|
+		deploy_environment = options[:deploy_environment] || DEFAULT_DEPLOY_ENVIRONMENT
+		# ensure_git_branch(
+		# 	branch: GIT_BRANCH
+		# )
+		# sh("git switch \"#{GIT_BRANCH}\"")
+		# ensure_git_status_clean unless ENV['FL_NO_ENSURE_CLEAN']
+		# reset_git_repo(
+		# 	force: true,
+		# 	skip_clean: true
+		# )
+		# git_pull
+	end
+
+	# Main lane for building and deploying the app to TestFlight
+	desc 'App Build lane ...'
+	private_lane :build do |options|
+		deploy_environment = options[:deploy_environment] || DEFAULT_DEPLOY_ENVIRONMENT
+		git_operations(deploy_environment: deploy_environment)
+
+		# House keeping
+		clean_build_artifacts
+		clear_derived_data
+
+		cocoapods(
+			verbose: false,
+			use_bundle_exec: true,
+			try_repo_update_on_error: true,
+		)
+
+		target = XCODE_TARGET || DEFAULT_XCODE_TARGET
+		build_type = options[:build_type] || DEFAULT_BUILD_TYPE
+		update_version_with build_type
+
+		build_app # build based on Gymfile values
+
+		app_name = CredentialsManager::AppfileConfig.try_fetch_value(:app_name)
+		notification(subtitle: "Finished Building #{app_name}",
+			message: 'Ready to upload...',
+			app_icon: './icon.png')
+		deploy_to_testflight(target: target) # Upload and distibute through Testflight.
+		post_release(target: target)
+	end
+
+	# Beta deployment mode.
+	desc 'Deploy Beta version of the app ...'
+	lane :beta do |options|
+		build_type = options[:build_type] || DEFAULT_BUILD_TYPE
+		build(deploy_environment: :dev, build_type: build_type)
+	end
+
+	desc 'Deploy Adhoc version of the app ...'
+	lane :adhoc do |options|
+		build_type = options[:build_type] || DEFAULT_BUILD_TYPE
+		build(deploy_environment: :dev, build_type: build_type)
+	end
+
+	desc 'Deploy App Store version of the app ...'
+	lane :app_store do |options|
+		build_type = options[:build_type] || DEFAULT_BUILD_TYPE
+		build(deploy_environment: :production, build_type: build_type)
+	end
+
+	desc 'Upload build to TestFlight ...'
+	lane :deploy_to_testflight do |options|
+		upload_to_testflight(
+			api_key_path: './fastlane/api_key_info.json',
+			skip_submission: false,
+			skip_waiting_for_build_processing: true,
+			distribute_external: false,
+			ipa: "#{ENV['APP_NAME']}.ipa"
+		)
+		target = options[:target] || DEFAULT_XCODE_TARGET
+		method = 'TestFlight'
+		notify_and_slack_distribution method
+	end
+
+	desc 'Slack to default channel'
+	lane :slack_message do |options|
+		slack(
+			message: options[:message],
+			success: true,
+			slack_url: default_slack_channel_webhook
+		)
+	end
+
+	desc 'Slack to sandbox destination (for testing)'
+	lane :slack_sandbox do |options|
+		slack(
+			message: options[:message],
+			success: true,
+			slack_url: default_slack_channel_webhook
+		)
+	end
+
+	desc 'Generate .ipa file'
+	lane :generate_ipa_file do |options|
+		build_app(
+			workspace: XCODE_WORKSPACE,
+			# configuration: 'Debug',
+			scheme: XCODE_APP_SCHEME,
+			# silent: true,
+			clean: true,
+			# skip_package_ipa: false,
+			output_name: "#{XCODE_APP_SCHEME} #{get_version_string(XCODE_TARGET)}.ipa",       # specify the name of the .ipa file to generate (including file extension)
+			# sdk: 'iOS 11.1'        # use SDK as the name or path of the base SDK when building the project.
+		)
+	end
+
+	desc 'Generate .app file'
+	lane :generate_app_file do |options|
+		build_app(
+			workspace: XCODE_WORKSPACE,
+			# configuration: 'Debug',
+			scheme: XCODE_APP_SCHEME,
+			clean: true,
+			# silent: true,
+			# skip_package_ipa: true,
+			output_name: "#{XCODE_APP_SCHEME} #{get_version_string(XCODE_TARGET)}.app",       # specify the name of the .ipa file to generate (including file extension)
+			# sdk: 'iOS 11.1'        # use SDK as the name or path of the base SDK when building the project.
+		)
+	end
+
+	desc 'Generate documentation'
+	lane :generate_docs do |options|
+		jazzy
+	end
+
+	########## On Error ##########
+
+	# error block is executed when a error occurs
+	error do |lane, exception, options|
+		subtitle = "Fastlane Error!"
+		app_name = CredentialsManager::AppfileConfig.try_fetch_value(:app_name)
+		version = "#{get_version_string(XCODE_TARGET)}"
+		message = "Error deploying #{app_name} #{version} build."
+		notification(subtitle: subtitle,
+			message: message,
+			app_icon: './icon.png')
+		slack(
+			message: exception.to_s,
+			success: false,
+			payload: { 'Output': exception.to_s },
+			slack_url: default_slack_channel_webhook
+		)
+	end
+
+	########## After ##########
+
+	desc 'Post release'
+	lane :post_release do |options|
+		version_string = "#{get_version_number(target: options[:target])} (#{get_build_number})"
+		tag_string = "#{get_version_number(target: options[:target])}/#{get_build_number}"
+		commit_version_bump(
+			message: "Version Bump of \"#{APP_NAME}\" to #{version_string}",
+			xcodeproj: XCODE_PROJECT
+		)
+		add_git_tag(build_number: tag_string)
+		push_to_git_remote
+	end
+
+	after_all do
+	end
+
+end
+
+# import './AT/Fastfile'

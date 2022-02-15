@@ -1,0 +1,15 @@
+# frozen_string_literal: true
+
+workspace ENV['XCODE_WORKSPACE']
+clean true
+cloned_source_packages_path 'Packages'
+# disable_package_automatic_updates true
+export_xcargs '-allowProvisioningUpdates'
+export_method 'app-store'
+include_bitcode true
+scheme ENV['XCODE_SCHEME']
+output_name "#{ENV['APP_NAME']}.ipa"
+
+for_lane :adhoc do
+	export_method 'ad-hoc'
+end

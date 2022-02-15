@@ -1,0 +1,13 @@
+# frozen_string_literal: true
+# For more information about the Appfile, see:
+# 	https://docs.fastlane.tools/advanced/#appfile
+
+# for_platform :ios do
+# `FL_APPLE_ID` environment variable can be used to override default Apple ID.
+apple_id ENV['FL_APPLE_ID']
+team_name  ENV['TEAM_NAME']
+team_id ENV['TEAM_ID']
+app_identifier ENV['APP_IDENTIFIER']	# The bundle identifier of your app
+itc_team_id ENV['ITC_TEAM_ID']	# App Store Connect Team ID
+# itc_team_name "TORANOTEC K.K."
+# end

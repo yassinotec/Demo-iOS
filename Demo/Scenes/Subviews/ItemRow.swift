@@ -11,7 +11,7 @@ import SwiftUI
 struct ItemRow: View {
 	/// Item.
 	var item: Item
-	
+
 	/// Currency formatter.
 	var currencyFormatter: NumberFormatter = {
 		let formatter = NumberFormatter()
@@ -20,11 +20,11 @@ struct ItemRow: View {
 		formatter.currencyCode = "JPY"
 		return formatter
 	}()
-	
+
 	var formattedPrice: String {
 		currencyFormatter.string(from: NSNumber(value: Double(item.price))) ?? "$0"
 	}
-	
+
 	var body: some View {
 		HStack {
 			Text(item.name)
@@ -33,7 +33,6 @@ struct ItemRow: View {
 		}
 	}
 }
-
 
 struct ItemRow_Previews: PreviewProvider {
 	static var previews: some View {

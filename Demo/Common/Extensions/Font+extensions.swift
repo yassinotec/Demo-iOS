@@ -9,11 +9,9 @@
 import SwiftUI
 
 extension Font {
-	
 	/// Item Title.
 	public static let itemTitle = Font.system(size: 12.0)
-	
+
 	/// Item Title.
 	public static let valueTitle = Font.system(size: 24.0)
-	
 }

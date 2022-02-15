@@ -9,9 +9,8 @@
 import Foundation
 
 class ViewModel: ObservableObject {
-	
 	@Published var items = [Item]()
-	
+
 	func fetchItems() {
 		let request: APIRequestProtocol = APIRequest()
 		request.perform { [weak self] (response: Response?) in
@@ -22,5 +21,4 @@ class ViewModel: ObservableObject {
 			self?.items = response.items
 		}
 	}
-	
 }

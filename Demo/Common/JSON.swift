@@ -9,7 +9,7 @@
 import Foundation
 
 /// JSON struct.
-struct JSON {
+enum JSON {
 	/// Encoder.
 	static let encoder: JSONEncoder = {
 		let encoder = JSONEncoder()
@@ -17,7 +17,7 @@ struct JSON {
 		encoder.outputFormatting = .prettyPrinted
 		return encoder
 	}()
-	
+
 	/// Decoder.
 	static let decoder: JSONDecoder = {
 		let decoder = JSONDecoder()

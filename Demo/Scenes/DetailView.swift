@@ -11,7 +11,7 @@ import SwiftUI
 struct DetailView: View {
 	/// Item.
 	var item: Item
-	
+
 	/// Currency formatter.
 	var currencyFormatter: NumberFormatter = {
 		let formatter = NumberFormatter()
@@ -20,12 +20,12 @@ struct DetailView: View {
 		formatter.currencyCode = "JPY"
 		return formatter
 	}()
-	
+
 	/// Formatted price.
 	var formattedPrice: String {
-		currencyFormatter.string(from: NSNumber(value: Double(item.price))) ?? "$0"
+		currencyFormatter.string(from: NSNumber(value: Double(item.price))) ?? "¥0"
 	}
-	
+
 	var priceView: some View {
 		VStack {
 			Text("Price")
@@ -34,10 +34,10 @@ struct DetailView: View {
 				.font(.valueTitle)
 		}
 	}
-	
+
 	let columns: [GridItem] =
 		Array(repeating: .init(.flexible()), count: 3)
-	
+
 	var keywordsView: some View {
 		VStack {
 			Text("Keywords")
@@ -53,7 +53,7 @@ struct DetailView: View {
 			}
 		}
 	}
-	
+
 	var body: some View {
 		VStack {
 			priceView
@@ -70,7 +70,7 @@ struct DetailView_Previews: PreviewProvider {
 		ForEach(
 			ColorScheme.allCases,
 			id: \.self,
-			content: DetailView(item: Constants.bulkyItem).preferredColorScheme)
+			content: DetailView(item: Constants.bulkyItem).preferredColorScheme
+		)
 	}
 }
-

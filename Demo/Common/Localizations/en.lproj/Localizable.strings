@@ -1,0 +1,11 @@
+/*
+  Localizable.strings
+  Demo
+ 
+  Created by Yassine ElBadaoui on 2021/03/25.
+  Copyright © 2021 TORANOTEC K.K. All rights reserved.
+*/
+
+"Demo" = "Demo";
+"Price" = "Price";
+"Keywords" = "Keywords";

@@ -25,7 +25,7 @@ default_platform(:ios)
 # #app channel webhook
 default_slack_channel = '#ios-notifications'
 # #sandbox channel webhook
-default_slack_channel_webhook = 'https://hooks.slack.com/services/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'	#See Slack Incoming Webhook
+# SLACK_URL = ENV['SLACK_URL'].freeze	# See Slack Incoming Webhook
 APP_NAME = ENV['APP_NAME'].freeze
 LANGUAGE = ENV['LANGUAGE'].freeze
 XCODE_WORKSPACE = "#{ENV['XCODE_WORKSPACE']}.xcworkspace".freeze
@@ -54,7 +54,6 @@ DEPLOY_ENVIRONMENT = DEFAULT_DEPLOY_ENVIRONMENT
 platform :ios do
 	before_all do
 		# Set enviroment variables
-		ENV['SLACK_URL'] = default_slack_channel_webhook
 		ENV['SCAN_SLACK_CHANNEL'] = default_slack_channel
 		ENV['FL_BUILD_NUMBER_PROJECT'] = XCODE_PROJECT
 		setup_circle_ci if ENV['IS_CIRCLECI']
@@ -252,20 +251,12 @@ platform :ios do
 
 	desc 'Slack to default channel'
 	lane :slack_message do |options|
-		slack(
-			message: options[:message],
-			success: true,
-			slack_url: default_slack_channel_webhook
-		)
+		slack(message: options[:message])
 	end
 
 	desc 'Slack to sandbox destination (for testing)'
 	lane :slack_sandbox do |options|
-		slack(
-			message: options[:message],
-			success: true,
-			slack_url: default_slack_channel_webhook
-		)
+		slack(message: options[:message])
 	end
 
 	desc 'Generate .ipa file'
@@ -308,14 +299,15 @@ platform :ios do
 		subtitle = "Fastlane Error!"
 		version = "#{get_version_string(XCODE_TARGET)}"
 		message = "Error deploying #{APP_NAME} #{version} build."
-		notification(subtitle: subtitle,
+		notification(
+			subtitle: subtitle,
 			message: message,
-			app_icon: './icon.png')
+			app_icon: './icon.png'
+		)
 		slack(
 			message: exception.to_s,
 			success: false,
-			payload: { 'Output': exception.to_s },
-			slack_url: default_slack_channel_webhook
+			payload: { 'Output': exception.to_s }
 		)
 	end
 

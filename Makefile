@@ -86,7 +86,7 @@ deploy-appstore: deploy-build-appstore
 
 deploy-build-%: install-gems
 	@echo deploying app \(incrementing build for $(*)\) ...
-	bundle exec fastlane beta build_type:build --env $(*)
+	bundle exec fastlane beta build_type:build --env $(*) --verbose
 
 deploy-patch-%: install-gems
 	@echo deploying app \(incrementing patch\) ...

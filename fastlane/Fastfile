@@ -208,8 +208,8 @@ platform :ios do
 		build_type = options[:build_type] || DEFAULT_BUILD_TYPE
 		update_version_with build_type
 
-		match(type: 'appstore')
-		build_app # build based on Gymfile values
+		sync_code_signing(type: 'appstore', readonly: true) # shortcut is `match`
+		build_app # Build based on Gymfile values. Shortcut is `gym`.
 
 		app_name = CredentialsManager::AppfileConfig.try_fetch_value(:app_name)
 		notification(subtitle: "Finished Building #{app_name}",

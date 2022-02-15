@@ -1,0 +1,43 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
+# For a detailed guide to building and testing on iOS, read the docs:
+# https://circleci.com/docs/2.0/testing-ios/
+version: 2.1
+orbs:
+  ruby: circleci/ruby@1.2.0
+
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+jobs:
+  build:
+    macos:
+      xcode: 13.2.1 # Specify the Xcode version to use
+
+    steps:
+      - checkout
+      - restore_cache:
+          key: circlev2-{{ checksum "Gemfile.lock" }}
+      - run: |
+          echo $API_KEY_INFO > fastlane/api_key_info.json 
+          make deploy
+      - save_cache:
+          key: circlev2-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+      # Collect XML test results data to show in the UI, and save the same XML
+      # files under test-results folder in the Artifacts tab
+      - store_test_results:
+          path: test_output
+      - store_artifacts:
+          path: test_output
+          destination: scan-output
+
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+workflows:
+  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
+    # Inside the workflow, you define the jobs you want to run.
+    jobs:
+      - build:
+          context:
+            - ios-deploy

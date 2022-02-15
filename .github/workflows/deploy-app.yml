@@ -12,6 +12,12 @@ jobs:
   build:
     runs-on: macos-latest
     steps:
+      - uses: actions/checkout@v2
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
       - name: Show Xcode version
         run: xcodebuild -version
 
@@ -25,7 +31,26 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pods-
 
-      - uses: actions/checkout@v2
+      - name: Setup SSH Keys and known_hosts for fastlane match
+        # Copied from https://github.com/maddox/actions/blob/master/ssh/entrypoint.sh
+        run: |
+          SSH_PATH="${HOME}/.ssh"
+
+          mkdir -p "${SSH_PATH}"
+          touch "${SSH_PATH}/known_hosts"
+
+          echo "${PRIVATE_KEY}" > "${SSH_PATH}/id_rsa"
+
+          chmod 700 "${SSH_PATH}"
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          chmod 600 "${SSH_PATH}/known_hosts"
+          chmod 600 "${SSH_PATH}/id_rsa"
+
+          eval $(ssh-agent)
+          ssh-add "${SSH_PATH}/id_rsa"
+        env:
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
       - run: make deploy
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}

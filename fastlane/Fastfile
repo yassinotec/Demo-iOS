@@ -72,11 +72,10 @@ platform :ios do
 	desc 'Create iOS app online'
 	lane :create_ios_app_online do
 		apple_id = CredentialsManager::AppfileConfig.try_fetch_value(:apple_id)
-		app_name = ENV['APP_NAME']
 		language = LANGUAGE
 		create_app_online(
 			username: apple_id,
-			app_name: app_name,
+			app_name: APP_NAME,
 			language: language,
 
 			# Optional
@@ -211,8 +210,7 @@ platform :ios do
 		sync_code_signing(type: 'appstore', readonly: true) # shortcut is `match`
 		build_app # Build based on Gymfile values. Shortcut is `gym`.
 
-		app_name = CredentialsManager::AppfileConfig.try_fetch_value(:app_name)
-		notification(subtitle: "Finished Building #{app_name}",
+		notification(subtitle: "Finished Building #{APP_NAME}",
 			message: 'Ready to upload...',
 			app_icon: './icon.png')
 		deploy_to_testflight(target: target) # Upload and distibute through Testflight.
@@ -240,13 +238,12 @@ platform :ios do
 
 	desc 'Upload build to TestFlight ...'
 	lane :deploy_to_testflight do |options|
-		app_name = CredentialsManager::AppfileConfig.try_fetch_value(:app_name)
 		upload_to_testflight(
 			api_key_path: './fastlane/api_key_info.json',
 			skip_submission: false,
 			skip_waiting_for_build_processing: true,
 			distribute_external: false,
-			ipa: "#{app_name}.ipa"
+			ipa: "#{APP_NAME}.ipa"
 		)
 		target = options[:target] || DEFAULT_XCODE_TARGET
 		method = 'TestFlight'
@@ -309,9 +306,8 @@ platform :ios do
 	# error block is executed when a error occurs
 	error do |lane, exception, options|
 		subtitle = "Fastlane Error!"
-		app_name = CredentialsManager::AppfileConfig.try_fetch_value(:app_name)
 		version = "#{get_version_string(XCODE_TARGET)}"
-		message = "Error deploying #{app_name} #{version} build."
+		message = "Error deploying #{APP_NAME} #{version} build."
 		notification(subtitle: subtitle,
 			message: message,
 			app_icon: './icon.png')
@@ -329,9 +325,8 @@ platform :ios do
 	lane :post_release do |options|
 		version_string = "#{get_version_number(target: options[:target])} (#{get_build_number})"
 		tag_string = "#{get_version_number(target: options[:target])}/#{get_build_number}"
-		app_name = CredentialsManager::AppfileConfig.try_fetch_value(:app_name)
 		commit_version_bump(
-			message: "Version Bump of \"#{app_name}\" to #{version_string}",
+			message: "Version Bump of \"#{APP_NAME}\" to #{version_string}",
 			xcodeproj: XCODE_PROJECT
 		)
 		add_git_tag(build_number: tag_string)

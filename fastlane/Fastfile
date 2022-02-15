@@ -58,6 +58,7 @@ platform :ios do
 		ENV['SCAN_SLACK_CHANNEL'] = default_slack_channel
 		ENV['FL_BUILD_NUMBER_PROJECT'] = XCODE_PROJECT
 		setup_circle_ci if ENV['IS_CIRCLECI']
+		setup_ci if ENV['CI']
 	end
 
 	before_each do
@@ -71,7 +72,7 @@ platform :ios do
 	desc 'Create iOS app online'
 	lane :create_ios_app_online do
 		apple_id = CredentialsManager::AppfileConfig.try_fetch_value(:apple_id)
-		app_name = APP_NAME
+		app_name = ENV['APP_NAME']
 		language = LANGUAGE
 		create_app_online(
 			username: apple_id,
@@ -207,6 +208,7 @@ platform :ios do
 		build_type = options[:build_type] || DEFAULT_BUILD_TYPE
 		update_version_with build_type
 
+		match(type: 'appstore')
 		build_app # build based on Gymfile values
 
 		app_name = CredentialsManager::AppfileConfig.try_fetch_value(:app_name)
@@ -238,12 +240,13 @@ platform :ios do
 
 	desc 'Upload build to TestFlight ...'
 	lane :deploy_to_testflight do |options|
+		app_name = CredentialsManager::AppfileConfig.try_fetch_value(:app_name)
 		upload_to_testflight(
 			api_key_path: './fastlane/api_key_info.json',
 			skip_submission: false,
 			skip_waiting_for_build_processing: true,
 			distribute_external: false,
-			ipa: "#{ENV['APP_NAME']}.ipa"
+			ipa: "#{app_name}.ipa"
 		)
 		target = options[:target] || DEFAULT_XCODE_TARGET
 		method = 'TestFlight'
@@ -326,8 +329,9 @@ platform :ios do
 	lane :post_release do |options|
 		version_string = "#{get_version_number(target: options[:target])} (#{get_build_number})"
 		tag_string = "#{get_version_number(target: options[:target])}/#{get_build_number}"
+		app_name = CredentialsManager::AppfileConfig.try_fetch_value(:app_name)
 		commit_version_bump(
-			message: "Version Bump of \"#{APP_NAME}\" to #{version_string}",
+			message: "Version Bump of \"#{app_name}\" to #{version_string}",
 			xcodeproj: XCODE_PROJECT
 		)
 		add_git_tag(build_number: tag_string)

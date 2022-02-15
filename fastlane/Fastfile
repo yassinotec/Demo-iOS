@@ -158,7 +158,7 @@ platform :ios do
 		notification(subtitle: 'Finished Distribution',
 			message: message,
 			app_icon: './icon.png')
-		slack(message: message)
+		slack(message: message) if ENV['SLACK_URL']
 	end
 
 	def get_version_string(target)
@@ -251,12 +251,12 @@ platform :ios do
 
 	desc 'Slack to default channel'
 	lane :slack_message do |options|
-		slack(message: options[:message])
+		slack(message: options[:message]) if ENV['SLACK_URL']
 	end
 
 	desc 'Slack to sandbox destination (for testing)'
 	lane :slack_sandbox do |options|
-		slack(message: options[:message])
+		slack(message: options[:message]) if ENV['SLACK_URL']
 	end
 
 	desc 'Generate .ipa file'
@@ -308,7 +308,7 @@ platform :ios do
 			message: exception.to_s,
 			success: false,
 			payload: { 'Output': exception.to_s }
-		)
+		) if ENV['SLACK_URL']
 	end
 
 	########## After ##########

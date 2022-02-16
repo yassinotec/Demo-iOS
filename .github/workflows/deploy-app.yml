@@ -47,26 +47,24 @@ jobs:
 
       - name: Setup Fastlane API key JSON
         run: |
-          API_KEY_INFO_PATH='fastlane/api_key_info.json'
+          API_KEY_INFO_PATH="fastlane/api_key_info.json"
           echo "${API_KEY_INFO}" > "${API_KEY_INFO_PATH}"
-          ls -la "${PWD}/${API_KEY_INFO_PATH}"
-          echo ::set-output name=API_KEY_INFO::$(cat ${API_KEY_INFO_PATH})
         env:
           API_KEY_INFO: ${{ secrets.API_KEY_INFO }}
 
-      - name: Get version
-        id: vars
-        run: |
-          API_KEY_INFO_PATH='fastlane/api_key_info.json'
-          echo ::set-output name=API_KEY_INFO::$(cat ${API_KEY_INFO_PATH})
-        env:
-          API_KEY_INFO: ${{ secrets.API_KEY_INFO }}
-
-      - name: Test output
-        run: echo ${{ steps.vars.outputs.API_KEY_INFO }}
-
-      # - name: Deploy App
+      # - name: Get version
+      #   id: vars
       #   run: |
-      #     make deploy
+      #     API_KEY_INFO_PATH='fastlane/api_key_info.json'
+      #     echo ::set-output name=API_KEY_INFO::$(cat ${API_KEY_INFO_PATH})
       #   env:
-      #     MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      #     API_KEY_INFO: ${{ secrets.API_KEY_INFO }}
+
+      # - name: Test output
+      #   run: echo ${{ steps.vars.outputs.API_KEY_INFO }}
+
+      - name: Deploy App
+        run: |
+          make deploy
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}

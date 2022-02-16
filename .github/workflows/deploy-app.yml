@@ -53,8 +53,8 @@ jobs:
         env:
           API_KEY_INFO: ${{ secrets.API_KEY_INFO }}
 
-      # - name: Deploy App
-      #   run: |
-      #     make deploy
-      #   env:
-      #     MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      - name: Deploy App
+        run: |
+          make deploy
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}

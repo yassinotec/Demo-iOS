@@ -18,12 +18,6 @@ jobs:
       #   with:
       #     bundler-cache: true
 
-      - name: Show Xcode version
-        run: xcodebuild -version
-
-      # - name: Bundle Install
-      #   run: bundle install
-
       - uses: actions/cache@v2
         with:
           path: Pods
@@ -53,8 +47,14 @@ jobs:
 
       - name: Setup Fastlane API key JSON
         run: |
-          echo "${API_KEY_INFO}" > "./fastlane/api_key_info.json"
-
-      - run: make deploy
+          API_KEY_INFO_PATH='fastlane/api_key_info.json'
+          echo "${API_KEY_INFO}" > "${API_KEY_INFO_PATH}"
+          cat "${API_KEY_INFO_PATH}"
         env:
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          API_KEY_INFO: ${{ secrets.API_KEY_INFO }}
+
+      # - name: Deploy App
+      #   run: |
+      #     make deploy
+      #   env:
+      #     MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}

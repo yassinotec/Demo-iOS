@@ -49,12 +49,22 @@ jobs:
         run: |
           API_KEY_INFO_PATH='fastlane/api_key_info.json'
           echo "${API_KEY_INFO}" > "${API_KEY_INFO_PATH}"
+          ls -la "${PWD}/${API_KEY_INFO_PATH}"
           cat "${API_KEY_INFO_PATH}"
         env:
           API_KEY_INFO: ${{ secrets.API_KEY_INFO }}
 
-      - name: Deploy App
-        run: |
-          make deploy
+      - name: Get version
+        id: vars
+        run: echo ::set-output name=API_KEY_INFO::$(cat API_KEY_INFO)
         env:
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          API_KEY_INFO: ${{ secrets.API_KEY_INFO }}
+
+      - name: Test output
+        run: echo ${{ steps.vars.outputs.API_KEY_INFO }}
+
+      # - name: Deploy App
+      #   run: |
+      #     make deploy
+      #   env:
+      #     MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}

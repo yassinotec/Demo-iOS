@@ -45,12 +45,12 @@ jobs:
         env:
           PRIVATE_KEY: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
 
-      - name: Setup Fastlane API key JSON
-        run: |
-          API_KEY_INFO_PATH="fastlane/api_key_info.json"
-          echo "${API_KEY_INFO}" > "${API_KEY_INFO_PATH}"
-        env:
-          API_KEY_INFO: ${{ secrets.API_KEY_INFO }}
+      # - name: Setup Fastlane API key JSON
+      #   run: |
+      #     API_KEY_INFO_PATH="fastlane/api_key_info.json"
+      #     echo "${API_KEY_INFO}" > "${API_KEY_INFO_PATH}"
+      #   env:
+      #     API_KEY_INFO: ${{ secrets.API_KEY_INFO }}
 
       # - name: Get version
       #   id: vars

@@ -45,23 +45,15 @@ jobs:
         env:
           PRIVATE_KEY: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
 
-      # - name: Setup Fastlane API key JSON
-      #   run: |
-      #     API_KEY_INFO_PATH="fastlane/api_key_info.json"
-      #     echo "${API_KEY_INFO}" > "${API_KEY_INFO_PATH}"
-      #   env:
-      #     API_KEY_INFO: ${{ secrets.API_KEY_INFO }}
+      - name: Show macOS version
+        run: |
+          sw_vers
 
-      # - name: Get version
-      #   id: vars
-      #   run: |
-      #     API_KEY_INFO_PATH='fastlane/api_key_info.json'
-      #     echo ::set-output name=API_KEY_INFO::$(cat ${API_KEY_INFO_PATH})
-      #   env:
-      #     API_KEY_INFO: ${{ secrets.API_KEY_INFO }}
-
-      # - name: Test output
-      #   run: echo ${{ steps.vars.outputs.API_KEY_INFO }}
+      - name: Show environment software versions
+        run: |
+          ruby --version
+          bundler --version
+          echo $HOME
 
       - name: Deploy App
         run: |
@@ -72,3 +64,6 @@ jobs:
           APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY }}
           APP_STORE_CONNECT_API_KEY_DURATION: ${{ secrets.APP_STORE_CONNECT_API_KEY_DURATION }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          PILOT_DISTRIBUTE_EXTERNAL: ${{ secrets.PILOT_DISTRIBUTE_EXTERNAL }}
+          PILOT_SKIP_SUBMISSION: ${{ secrets.PILOT_SKIP_SUBMISSION }}
+          PILOT_SKIP_WAITING_FOR_BUILD_PROCESSING: ${{ secrets.PILOT_SKIP_WAITING_FOR_BUILD_PROCESSING }}

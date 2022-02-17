@@ -54,8 +54,8 @@ DEPLOY_ENVIRONMENT = DEFAULT_DEPLOY_ENVIRONMENT
 platform :ios do
 	before_all do
 		# Set enviroment variables
-		ENV['SCAN_SLACK_CHANNEL'] = default_slack_channel
-		ENV['FL_BUILD_NUMBER_PROJECT'] = XCODE_PROJECT
+		ENV['SCAN_SLACK_CHANNEL'] ||= default_slack_channel
+		ENV['FL_BUILD_NUMBER_PROJECT'] ||= XCODE_PROJECT
 		# setup_circle_ci if ENV['IS_CIRCLECI']
 		setup_ci if is_ci
 	end
@@ -318,12 +318,14 @@ platform :ios do
 
 	desc 'Post release'
 	lane :post_release do |options|
-		sh 'git checkout -- Gemfile.lock' # Discard changes to Gemfile.lock (frozen option didn't work)
 		version_string = "#{get_version_number(target: options[:target])} (#{get_build_number})"
 		tag_string = "#{get_version_number(target: options[:target])}/#{get_build_number}"
+		message = "Version Bump of \"#{APP_NAME}\" to #{version_string}"
 		commit_version_bump(
-			message: "Version Bump of \"#{APP_NAME}\" to #{version_string}",
-			xcodeproj: XCODE_PROJECT
+			message: message,
+			xcodeproj: XCODE_PROJECT,
+			force: true,
+			ignore: /Gemfile.lock/, # Discard changes to Gemfile.lock (frozen option didn't work)
 		)
 		add_git_tag(build_number: tag_string)
 		push_to_git_remote

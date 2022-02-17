@@ -38,7 +38,7 @@ install-gems: command-exists-bundle
 	# Set local gem installation to main gems only
 	[ -n "${CI}" ] && bundle config set --local without development || bundle config unset --local without
 	# Install bundles with multiple jobs for performance
-	bundle install --jobs 8 --retry 3 --frozen ${VERBOSE}
+	bundle install --jobs 8 --retry 3 --deployment --clean ${VERBOSE}
 
 install-pods: command-exists-bundle
 	@echo Installing pods ...

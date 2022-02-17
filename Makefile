@@ -93,19 +93,19 @@ deploy-next-generation: deploy-build-next-generation
 
 deploy-appstore: deploy-build-appstore
 
-deploy-build-%: install-gems
+deploy-build-%:
 	@echo deploying app \(incrementing build for $(*)\) ...
 	bundle exec fastlane beta build_type:build --env $(*) ${VERBOSE}
 
-deploy-patch-%: install-gems
+deploy-patch-%:
 	@echo deploying app \(incrementing patch\) ...
 	bundle exec fastlane beta build_type:patch --env $(*) ${VERBOSE}
 
-deploy-minor-%: install-gems
+deploy-minor-%:
 	@echo deploying app \(incrementing minor\) ...
 	bundle exec fastlane beta build_type:minor --env $(*) ${VERBOSE}
 
-deploy-major-%: install-gems
+deploy-major-%:
 	@echo deploying app \(incrementing major\) ...
 	bundle exec fastlane beta build_type:major --env $(*) ${VERBOSE}
 

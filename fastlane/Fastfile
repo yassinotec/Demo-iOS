@@ -162,7 +162,7 @@ platform :ios do
 			subtitle: subtitle,
 			message: message,
 			app_icon: './icon.png'
-		) unless ENV['CI']
+		) unless is_ci
 		slack(message: message) if ENV['SLACK_URL']
 	end
 
@@ -201,6 +201,7 @@ platform :ios do
 		clear_derived_data
 
 		# Install dependencies
+		sh 'git checkout -- Gemfile.lock' # Discard changes to Gemfile.lock (frozen option didn't work)
 		cocoapods(
 			use_bundle_exec: true,
 			try_repo_update_on_error: true,
@@ -219,7 +220,7 @@ platform :ios do
 			subtitle: subtitle,
 			message: message,
 			app_icon: './icon.png'
-		) unless ENV['CI']
+		) unless is_ci
 		deploy_to_testflight(target: target) # Upload and distibute through Testflight.
 		post_release(target: target)
 	end
@@ -306,7 +307,7 @@ platform :ios do
 			subtitle: subtitle,
 			message: message,
 			app_icon: './icon.png'
-		) unless ENV['CI']
+		) unless is_ci
 		slack(
 			message: exception.to_s,
 			success: false,

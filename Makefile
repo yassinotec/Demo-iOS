@@ -33,18 +33,18 @@ install-dependencies: install-gems install-pods
 
 install-gems: command-exists-bundle
 	@echo Updating bundler ...
-	gem update bundler
+	gem update bundler ${VERBOSE}
 	@echo Installing gems ...
 	# Set local gem installation to main gems only
 	[ -n "${CI}" ] && bundle config set --local without development || bundle config unset --local without
 	# Install bundles with multiple jobs for performance
-	bundle install --jobs 8 --retry 3
+	bundle install --jobs 8 --retry 3 ${VERBOSE}
 	# Discard changes to Gemfile.lock to allow successful commit of Fastlane at the end of build process
 	[ -n "${CI}" ] && git checkout -- Gemfile.lock || echo "Skipping Gemfile.lock discard"
 
 install-pods: command-exists-bundle
 	@echo Installing pods ...
-	bundle exec pod install --repo-update --verbose
+	bundle exec pod install --repo-update ${VERBOSE}
 
 force-update-dependencies: force-update-gems force-update-pods
 	@echo Force update dependencies ...
@@ -72,7 +72,7 @@ update-gems: command-exists-bundle
 
 update-pods: command-exists-bundle
 	@echo Updating pods ...
-	bundle exec pod update --verbose
+	bundle exec pod update ${VERBOSE}
 
 build: generate-ipa-file
 	@echo building app ...
@@ -95,23 +95,27 @@ deploy-appstore: deploy-build-appstore
 
 deploy-build-%: install-gems
 	@echo deploying app \(incrementing build for $(*)\) ...
-	bundle exec fastlane beta build_type:build --env $(*) --verbose
+	bundle exec fastlane beta build_type:build --env $(*) ${VERBOSE}
 
 deploy-patch-%: install-gems
 	@echo deploying app \(incrementing patch\) ...
-	bundle exec fastlane beta build_type:patch --env $(*)
+	bundle exec fastlane beta build_type:patch --env $(*) ${VERBOSE}
 
 deploy-minor-%: install-gems
 	@echo deploying app \(incrementing minor\) ...
-	bundle exec fastlane beta build_type:minor --env $(*)
+	bundle exec fastlane beta build_type:minor --env $(*) ${VERBOSE}
 
 deploy-major-%: install-gems
 	@echo deploying app \(incrementing major\) ...
-	bundle exec fastlane beta build_type:major --env $(*)
+	bundle exec fastlane beta build_type:major --env $(*) ${VERBOSE}
+
+increment_build_number:
+	@echo Incrementing build number app ...
+	bundle exec fastlane increment_version_with build_type:build commit_version_bump:true
 
 upload-to-testflight:
 	@echo Uploading build to TestFlight ...
-	bundle exec fastlane deploy_to_testflight
+	bundle exec fastlane deploy_to_testflight ${VERBOSE}
 
 swiftgen:
 	Pods/SwiftGen/bin/swiftgen

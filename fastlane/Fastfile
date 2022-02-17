@@ -201,7 +201,6 @@ platform :ios do
 		clear_derived_data
 
 		# Install dependencies
-		sh 'git checkout -- Gemfile.lock' # Discard changes to Gemfile.lock (frozen option didn't work)
 		cocoapods(
 			use_bundle_exec: true,
 			try_repo_update_on_error: true,
@@ -319,6 +318,7 @@ platform :ios do
 
 	desc 'Post release'
 	lane :post_release do |options|
+		sh 'git checkout -- Gemfile.lock' # Discard changes to Gemfile.lock (frozen option didn't work)
 		version_string = "#{get_version_number(target: options[:target])} (#{get_build_number})"
 		tag_string = "#{get_version_number(target: options[:target])}/#{get_build_number}"
 		commit_version_bump(

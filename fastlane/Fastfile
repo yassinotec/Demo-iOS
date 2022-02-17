@@ -94,7 +94,7 @@ platform :ios do
 				# communication_notifications: 'on',        # Valid values: 'on', 'off'
 				# critical_alerts: 'on',                    # Valid values: 'on', 'off'
 				# custom_network_protocol: 'on',            # Valid values: 'on', 'off'
-				data_protection: 'complete',              # Valid values: 'complete', 'unlessopen', 'untilfirstauth', 'off'
+				data_protection: 'complete', # Valid values: 'complete', 'unlessopen', 'untilfirstauth', 'off'
 				# driver_kit_endpoint_security: 'on',       # Valid values: 'on', 'off'
 				# driver_kit_family_hid_device: 'on',       # Valid values: 'on', 'off'
 				# driver_kit_family_networking: 'on',       # Valid values: 'on', 'off'
@@ -119,14 +119,14 @@ platform :ios do
 				# low_latency_hls: 'on',                    # Valid values: 'on', 'off'
 				# managed_associated_domains: 'on',         # Valid values: 'on', 'off'
 				# maps: 'on',                               # Valid values: 'on', 'off'
-				multipath: 'on',                          # Valid values: 'on', 'off'
+				multipath: 'on', # Valid values: 'on', 'off'
 				# multitasking_camera_access: 'on',         # Valid values: 'on', 'off'
 				# music_kit: 'on',                          # Valid values: 'on', 'off'
 				# network_extension: 'on',                  # Valid values: 'on', 'off'
 				# nfc_tag_reading: 'on',                    # Valid values: 'on', 'off'
 				# passbook: 'on',                           # Valid values: 'on', 'off' (deprecated)
 				# personal_vpn: 'on',                       # Valid values: 'on', 'off'
-				push_notification: 'on',                  # Valid values: 'on', 'off'
+				push_notification: 'on' # Valid values: 'on', 'off'
 				# sf_universal_link_api: 'on',              # Valid values: 'on', 'off'
 				# shazam_kit: 'on',                         # Valid values: 'on', 'off'
 				# sign_in_with_apple: 'on',                 # Valid values: 'on', 'off'
@@ -144,7 +144,8 @@ platform :ios do
 
 	lane :increment_version_with do |options|
 		# Decide how to increment version/build numbers.
-		case options[:build_type]
+		build_type = options[:build_type] || DEFAULT_BUILD_TYPE
+		case build_type
 		when 'build'
 			increment_build_number
 		else
@@ -155,18 +156,20 @@ platform :ios do
 	end
 
 	def notify_and_slack_distribution(method)
+		subtitle = 'Finished Distribution'
 		message = "Successfully distributed #{get_version_string(XCODE_TARGET)} build through #{method}."
-		notification(subtitle: 'Finished Distribution',
+		notification(
+			subtitle: subtitle,
 			message: message,
-			app_icon: './icon.png')
+			app_icon: './icon.png'
+		) unless ENV['CI']
 		slack(message: message) if ENV['SLACK_URL']
 	end
 
 	def get_version_string(target)
 		version = get_version_number(target: target)
 		build_number = get_build_number
-		version_string = "#{version} (#{build_number})"
-		return version_string
+		"#{version} (#{build_number})"
 	end
 
 	########## Lanes ##########
@@ -200,19 +203,22 @@ platform :ios do
 		cocoapods(
 			verbose: false,
 			use_bundle_exec: true,
-			try_repo_update_on_error: true,
+			try_repo_update_on_error: true
 		)
 
 		target = XCODE_TARGET || DEFAULT_XCODE_TARGET
 		build_type = options[:build_type] || DEFAULT_BUILD_TYPE
-		increment_version_with build_type
+		increment_version_with(build_type: build_type)
 
 		sync_code_signing(type: 'appstore', readonly: true) # shortcut is `match`
 		build_app # Build based on Gymfile values. Shortcut is `gym`.
-
-		notification(subtitle: "Finished Building #{APP_NAME}",
-			message: 'Ready to upload...',
-			app_icon: './icon.png')
+		subtitle = "Finished Building #{APP_NAME}"
+		message = 'Ready to upload...'
+		notification(
+			subtitle: subtitle,
+			message: message,
+			app_icon: './icon.png'
+		) unless ENV['CI']
 		deploy_to_testflight(target: target) # Upload and distibute through Testflight.
 		post_release(target: target)
 	end
@@ -220,19 +226,19 @@ platform :ios do
 	# Beta deployment mode.
 	desc 'Deploy Beta version of the app ...'
 	lane :beta do |options|
-		build_type = options[:build_type] || DEFAULT_BUILD_TYPE
+		build_type = options[:build_type]
 		build(deploy_environment: :dev, build_type: build_type)
 	end
 
 	desc 'Deploy Adhoc version of the app ...'
 	lane :adhoc do |options|
-		build_type = options[:build_type] || DEFAULT_BUILD_TYPE
+		build_type = options[:build_type]
 		build(deploy_environment: :dev, build_type: build_type)
 	end
 
 	desc 'Deploy App Store version of the app ...'
 	lane :app_store do |options|
-		build_type = options[:build_type] || DEFAULT_BUILD_TYPE
+		build_type = options[:build_type]
 		build(deploy_environment: :production, build_type: build_type)
 	end
 
@@ -256,7 +262,7 @@ platform :ios do
 	end
 
 	desc 'Generate .ipa file'
-	lane :generate_ipa_file do |options|
+	lane :generate_ipa_file do
 		build_app(
 			workspace: XCODE_WORKSPACE,
 			# configuration: 'Debug',
@@ -264,13 +270,13 @@ platform :ios do
 			# silent: true,
 			clean: true,
 			# skip_package_ipa: false,
-			output_name: "#{XCODE_APP_SCHEME} #{get_version_string(XCODE_TARGET)}.ipa",       # specify the name of the .ipa file to generate (including file extension)
+			output_name: "#{XCODE_APP_SCHEME} #{get_version_string(XCODE_TARGET)}.ipa" # specify the name of the .ipa file to generate (including file extension)
 			# sdk: 'iOS 11.1'        # use SDK as the name or path of the base SDK when building the project.
 		)
 	end
 
 	desc 'Generate .app file'
-	lane :generate_app_file do |options|
+	lane :generate_app_file do
 		build_app(
 			workspace: XCODE_WORKSPACE,
 			# configuration: 'Debug',
@@ -278,28 +284,28 @@ platform :ios do
 			clean: true,
 			# silent: true,
 			# skip_package_ipa: true,
-			output_name: "#{XCODE_APP_SCHEME} #{get_version_string(XCODE_TARGET)}.app",       # specify the name of the .ipa file to generate (including file extension)
+			output_name: "#{XCODE_APP_SCHEME} #{get_version_string(XCODE_TARGET)}.app" # specify the name of the .ipa file to generate (including file extension)
 			# sdk: 'iOS 11.1'        # use SDK as the name or path of the base SDK when building the project.
 		)
 	end
 
 	desc 'Generate documentation'
-	lane :generate_docs do |options|
+	lane :generate_docs do
 		jazzy
 	end
 
 	########## On Error ##########
 
 	# error block is executed when a error occurs
-	error do |lane, exception, options|
-		subtitle = "Fastlane Error!"
-		version = "#{get_version_string(XCODE_TARGET)}"
+	error do |_lane, exception, _options|
+		version = get_version_string(XCODE_TARGET).to_s
+		subtitle = 'Fastlane Error!'
 		message = "Error deploying #{APP_NAME} #{version} build."
 		notification(
 			subtitle: subtitle,
 			message: message,
 			app_icon: './icon.png'
-		)
+		) unless ENV['CI']
 		slack(
 			message: exception.to_s,
 			success: false,
@@ -323,7 +329,4 @@ platform :ios do
 
 	after_all do
 	end
-
 end
-
-# import './AT/Fastfile'

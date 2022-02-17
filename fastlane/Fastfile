@@ -201,7 +201,6 @@ platform :ios do
 		clear_derived_data
 
 		# Install dependencies
-		bundle_install(frozen: true)
 		cocoapods(
 			use_bundle_exec: true,
 			try_repo_update_on_error: true,

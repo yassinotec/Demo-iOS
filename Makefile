@@ -38,9 +38,7 @@ install-gems: command-exists-bundle
 	# Set local gem installation to main gems only
 	[ -n "${CI}" ] && bundle config set --local without development || bundle config unset --local without
 	# Install bundles with multiple jobs for performance
-	bundle install --jobs 8 --retry 3 ${VERBOSE}
-	# Discard changes to Gemfile.lock to allow successful commit of Fastlane at the end of build process
-	[ -n "${CI}" ] && git checkout -- Gemfile.lock || echo "Skipping Gemfile.lock discard"
+	bundle install --jobs 8 --retry 3 --frozen ${VERBOSE}
 
 install-pods: command-exists-bundle
 	@echo Installing pods ...
@@ -93,19 +91,19 @@ deploy-next-generation: deploy-build-next-generation
 
 deploy-appstore: deploy-build-appstore
 
-deploy-build-%:
+deploy-build-%: install-gems
 	@echo deploying app \(incrementing build for $(*)\) ...
 	bundle exec fastlane beta build_type:build --env $(*) ${VERBOSE}
 
-deploy-patch-%:
+deploy-patch-%: install-gems
 	@echo deploying app \(incrementing patch\) ...
 	bundle exec fastlane beta build_type:patch --env $(*) ${VERBOSE}
 
-deploy-minor-%:
+deploy-minor-%: install-gems
 	@echo deploying app \(incrementing minor\) ...
 	bundle exec fastlane beta build_type:minor --env $(*) ${VERBOSE}
 
-deploy-major-%:
+deploy-major-%: install-gems
 	@echo deploying app \(incrementing major\) ...
 	bundle exec fastlane beta build_type:major --env $(*) ${VERBOSE}
 

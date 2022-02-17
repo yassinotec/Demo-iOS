@@ -237,8 +237,9 @@ platform :ios do
 
 	desc 'Upload build to TestFlight ...'
 	lane :deploy_to_testflight do |options|
+		app_store_connect_api_key
 		upload_to_testflight(
-			api_key_path: './fastlane/api_key_info.json',
+			# api_key_path: './fastlane/api_key_info.json',
 			skip_submission: false,
 			skip_waiting_for_build_processing: true,
 			distribute_external: false,

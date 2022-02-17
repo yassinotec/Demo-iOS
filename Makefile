@@ -22,12 +22,23 @@ print-environment:
 	@echo XCODE_UITESTS_SCHEME = "${XCODE_UITESTS_SCHEME}"
 	@echo XCODE_WORKSPACE = "${XCODE_WORKSPACE}"
 
+clean: command-exists-bundle
+	bundle clean
+	bundle exec pod cache clean --all
+	bundle exec fastlane run clean_build_artifacts
+	bundle exec fastlane run clear_derived_data
+
 install-dependencies: install-gems install-pods
 	@echo Finished installing dependencies ...
 
 install-gems: command-exists-bundle
 	@echo Installing gems ...
-	bundle install --jobs 4 --retry 3
+	# Set local gem installation to main gems only
+	[ -n "${CI}" ] && bundle config set --local without development || bundle config unset --local without
+	# Install bundles with multiple jobs for performance
+	bundle install --jobs 8 --retry 3
+	# Discard changes to Gemfile.lock to allow successful commit of Fastlane at the end of build process
+	[ -n "${CI}" ] && git checkout -- Gemfile.lock || echo "Skipping Gemfile.lock discard"
 
 install-pods: command-exists-bundle
 	@echo Installing pods ...
@@ -71,10 +82,6 @@ generate-ipa-file: command-exists-bundle
 generate-app-file: command-exists-bundle
 	@echo building ".app" file ...
 	bundle exec fastlane generate_app_file
-
-clean: command-exists-bundle
-	bundle exec fastlane clean_build_artifacts
-	bundle exec fastlane clear_derived_data
 
 deploy: deploy-appstore
 

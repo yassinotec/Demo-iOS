@@ -238,13 +238,7 @@ platform :ios do
 	desc 'Upload build to TestFlight ...'
 	lane :deploy_to_testflight do |options|
 		app_store_connect_api_key
-		upload_to_testflight(
-			# api_key_path: './fastlane/api_key_info.json',
-			skip_submission: false,
-			skip_waiting_for_build_processing: true,
-			distribute_external: false,
-			ipa: "#{APP_NAME}.ipa"
-		)
+		upload_to_testflight # (ipa: "#{APP_NAME}.ipa")
 		target = options[:target] || DEFAULT_XCODE_TARGET
 		method = 'TestFlight'
 		notify_and_slack_distribution method

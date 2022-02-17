@@ -57,6 +57,8 @@ jobs:
 
       - name: Deploy App
         run: |
+          # rm -rf vendor/bundle Pods
+          bundle lock --add-platform x86_64-darwin-20
           make deploy
         env:
           APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_ID }}

@@ -142,15 +142,16 @@ platform :ios do
 		)
 	end
 
-	def update_version_with(build_type)
+	lane :increment_version_with do |options|
 		# Decide how to increment version/build numbers.
-		case build_type
+		case options[:build_type]
 		when 'build'
 			increment_build_number
 		else
 			increment_version_number(bump_type: build_type)
 			increment_build_number(build_number: '0')
 		end
+		post_release if options[:commit_version_bump]
 	end
 
 	def notify_and_slack_distribution(method)
@@ -204,7 +205,7 @@ platform :ios do
 
 		target = XCODE_TARGET || DEFAULT_XCODE_TARGET
 		build_type = options[:build_type] || DEFAULT_BUILD_TYPE
-		update_version_with build_type
+		increment_version_with build_type
 
 		sync_code_signing(type: 'appstore', readonly: true) # shortcut is `match`
 		build_app # Build based on Gymfile values. Shortcut is `gym`.

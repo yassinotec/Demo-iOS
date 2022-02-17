@@ -31,6 +31,14 @@ Generate new localized screenshots
 
 Create iOS app online
 
+### ios increment_version_with
+
+```sh
+[bundle exec] fastlane ios increment_version_with
+```
+
+
+
 ### ios beta
 
 ```sh

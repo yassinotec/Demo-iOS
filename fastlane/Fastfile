@@ -56,8 +56,8 @@ platform :ios do
 		# Set enviroment variables
 		ENV['SCAN_SLACK_CHANNEL'] = default_slack_channel
 		ENV['FL_BUILD_NUMBER_PROJECT'] = XCODE_PROJECT
-		setup_circle_ci if ENV['IS_CIRCLECI']
-		setup_ci if ENV['CI']
+		# setup_circle_ci if ENV['IS_CIRCLECI']
+		setup_ci if is_ci
 	end
 
 	before_each do
@@ -200,10 +200,12 @@ platform :ios do
 		clean_build_artifacts
 		clear_derived_data
 
+		# Install dependencies
+		bundle_install(frozen: true)
 		cocoapods(
-			verbose: false,
 			use_bundle_exec: true,
 			try_repo_update_on_error: true
+			deployment: true
 		)
 
 		target = XCODE_TARGET || DEFAULT_XCODE_TARGET

@@ -2,9 +2,13 @@
 
 source 'https://rubygems.org'
 
+ruby '~> 2.6.8'
+
+# Main gems
 gem 'cocoapods'
 gem 'fastlane'
 
+# Development gems
 group :development do
 	gem 'danger'
 	gem 'jazzy'

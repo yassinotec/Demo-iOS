@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 # Uncomment the next line to define a global platform for your project
-DEPLOYMENT_TARGET = '13.4'
-platform :ios, DEPLOYMENT_TARGET
+platform :ios, '13.4'
 
 target 'Demo' do
 	# Comment the next line if you don't want to use dynamic frameworks

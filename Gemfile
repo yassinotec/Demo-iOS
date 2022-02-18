@@ -1,14 +1,16 @@
-source "https://rubygems.org"
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
 
 gem 'cocoapods'
 gem 'fastlane'
 
 group :development do
 	gem 'danger'
-	gem "jazzy"
+	gem 'jazzy'
 	gem 'linterbot'
-	gem "reek"
-	gem "rubocop"
+	gem 'reek'
+	gem 'rubocop'
 	gem 'solargraph'
 	gem 'xcodeproj'
 	gem 'xcpretty'

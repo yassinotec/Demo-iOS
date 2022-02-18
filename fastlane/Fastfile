@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This file contains the fastlane.tools configuration
 # You can find the documentation at https://docs.fastlane.tools
 #
@@ -28,7 +30,7 @@ default_slack_channel = '#ios-notifications'
 # SLACK_URL = ENV['SLACK_URL'].freeze	# See Slack Incoming Webhook
 APP_NAME = ENV['APP_NAME'].freeze
 LANGUAGE = ENV['LANGUAGE'].freeze
-XCODE_WORKSPACE = "#{ENV['XCODE_WORKSPACE']}.xcworkspace".freeze
+XCODE_WORKSPACE = "#{ENV['XCODE_WORKSPACE']}.xcworkspace"
 XCODE_PROJECT = ENV['XCODE_PROJECT'].freeze
 XCODE_UITESTS_SCHEME = ENV['XCODE_UITESTS_SCHEME'].freeze
 XCODE_APP_SCHEME = ENV['XCODE_SCHEME'].freeze
@@ -39,7 +41,7 @@ GIT_BRANCH = ENV['GIT_BRANCH']
 # Defaults
 ######################
 DEFAULT_XCODE_TARGET = XCODE_TARGET.freeze
-DEFAULT_BUILD_TYPE = 'build'.freeze
+DEFAULT_BUILD_TYPE = 'build'
 DEFAULT_DEPLOY_ENVIRONMENT = :dev
 
 ######################
@@ -61,6 +63,7 @@ platform :ios do
 	end
 
 	before_each do
+		# Run before each lane
 	end
 
 	desc 'Generate new localized screenshots'
@@ -158,11 +161,13 @@ platform :ios do
 	def notify_and_slack_distribution(method)
 		subtitle = 'Finished Distribution'
 		message = "Successfully distributed #{get_version_string(XCODE_TARGET)} build through #{method}."
-		notification(
-			subtitle: subtitle,
-			message: message,
-			app_icon: './icon.png'
-		) unless is_ci
+		unless is_ci
+			notification(
+				subtitle: subtitle,
+				message: message,
+				app_icon: './icon.png'
+			)
+		end
 		slack(message: message) if ENV['SLACK_URL']
 	end
 
@@ -177,7 +182,6 @@ platform :ios do
 	# Git related
 	desc 'Git operations ...'
 	private_lane :git_operations do |options|
-		deploy_environment = options[:deploy_environment] || DEFAULT_DEPLOY_ENVIRONMENT
 		# ensure_git_branch(
 		# 	branch: GIT_BRANCH
 		# )
@@ -215,11 +219,13 @@ platform :ios do
 		build_app # Build based on Gymfile values. Shortcut is `gym`.
 		subtitle = "Finished Building #{APP_NAME}"
 		message = 'Ready to upload...'
-		notification(
-			subtitle: subtitle,
-			message: message,
-			app_icon: './icon.png'
-		) unless is_ci
+		unless is_ci
+			notification(
+				subtitle: subtitle,
+				message: message,
+				app_icon: './icon.png'
+			)
+		end
 		deploy_to_testflight(target: target) # Upload and distibute through Testflight.
 		post_release(target: target)
 	end
@@ -247,7 +253,6 @@ platform :ios do
 	lane :deploy_to_testflight do |options|
 		app_store_connect_api_key
 		upload_to_testflight # (ipa: "#{APP_NAME}.ipa")
-		target = options[:target] || DEFAULT_XCODE_TARGET
 		method = 'TestFlight'
 		notify_and_slack_distribution method
 	end
@@ -298,20 +303,24 @@ platform :ios do
 	########## On Error ##########
 
 	# error block is executed when a error occurs
-	error do |_lane, exception, _options|
+	error do |lane, exception, options|
 		version = get_version_string(XCODE_TARGET).to_s
 		subtitle = 'Fastlane Error!'
 		message = "Error deploying #{APP_NAME} #{version} build."
-		notification(
-			subtitle: subtitle,
-			message: message,
-			app_icon: './icon.png'
-		) unless is_ci
-		slack(
-			message: exception.to_s,
-			success: false,
-			payload: { 'Output': exception.to_s }
-		) if ENV['SLACK_URL']
+		unless is_ci
+			notification(
+				subtitle: subtitle,
+				message: message,
+				app_icon: './icon.png'
+			)
+		end
+		if ENV['SLACK_URL']
+			slack(
+				message: exception.to_s,
+				success: false,
+				payload: { Output: exception.to_s }
+			)
+		end
 	end
 
 	########## After ##########
@@ -325,12 +334,13 @@ platform :ios do
 			message: message,
 			xcodeproj: XCODE_PROJECT,
 			force: true,
-			ignore: /Gemfile.lock/, # Discard changes to Gemfile.lock (frozen option didn't work)
+			ignore: /Gemfile.lock/ # Discard changes to Gemfile.lock (frozen option didn't work)
 		)
 		add_git_tag(build_number: tag_string)
 		push_to_git_remote
 	end
 
 	after_all do
+		# Run after all lanes
 	end
 end

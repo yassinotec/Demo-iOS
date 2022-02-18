@@ -29,7 +29,6 @@ default_slack_channel = '#ios-notifications'
 # #sandbox channel webhook
 # SLACK_URL = ENV['SLACK_URL'].freeze	# See Slack Incoming Webhook
 APP_NAME = ENV['APP_NAME'].freeze
-LANGUAGE = ENV['LANGUAGE'].freeze
 XCODE_WORKSPACE = "#{ENV['XCODE_WORKSPACE']}.xcworkspace"
 XCODE_PROJECT = ENV['XCODE_PROJECT'].freeze
 XCODE_UITESTS_SCHEME = ENV['XCODE_UITESTS_SCHEME'].freeze
@@ -68,18 +67,15 @@ platform :ios do
 
 	desc 'Generate new localized screenshots'
 	lane :screenshots do
-		capture_screenshots(workspace: XCODE_WORKSPACE, scheme: XCODE_UITESTS_SCHEME)
+		capture_screenshots(
+			workspace: XCODE_WORKSPACE,
+			scheme: XCODE_UITESTS_SCHEME
+		)
 	end
 
 	desc 'Create iOS app online'
 	lane :create_ios_app_online do
-		apple_id = CredentialsManager::AppfileConfig.try_fetch_value(:apple_id)
-		language = LANGUAGE
 		create_app_online(
-			username: apple_id,
-			app_name: APP_NAME,
-			language: language,
-
 			# Optional
 			# App services can be enabled during app creation
 			enable_services: {
@@ -160,7 +156,7 @@ platform :ios do
 
 	def notify_and_slack_distribution(method)
 		subtitle = 'Finished Distribution'
-		message = "Successfully distributed #{get_version_string(XCODE_TARGET)} build through #{method}."
+		message = "Successfully distributed #{get_version_string} build through #{method}."
 		unless is_ci
 			notification(
 				subtitle: subtitle,
@@ -171,10 +167,10 @@ platform :ios do
 		slack(message: message) if ENV['SLACK_URL']
 	end
 
-	def get_version_string(target)
-		version = get_version_number(target: target)
+	def get_version_string(is_with_slash: false)
+		version = get_version_number
 		build_number = get_build_number
-		"#{version} (#{build_number})"
+		is_with_slash ? "#{version}/#{build_number}" : "#{version} (#{build_number})"
 	end
 
 	########## Lanes ##########
@@ -208,7 +204,7 @@ platform :ios do
 		cocoapods(
 			use_bundle_exec: true,
 			try_repo_update_on_error: true,
-			deployment: true
+			deployment: is_ci
 		)
 
 		target = XCODE_TARGET || DEFAULT_XCODE_TARGET
@@ -226,7 +222,7 @@ platform :ios do
 				app_icon: './icon.png'
 			)
 		end
-		deploy_to_testflight(target: target) # Upload and distibute through Testflight.
+		deploy_to_testflight # Upload and distibute through Testflight.
 		post_release(target: target)
 	end
 
@@ -270,28 +266,14 @@ platform :ios do
 	desc 'Generate .ipa file'
 	lane :generate_ipa_file do
 		build_app(
-			workspace: XCODE_WORKSPACE,
-			# configuration: 'Debug',
-			scheme: XCODE_APP_SCHEME,
-			# silent: true,
-			clean: true,
-			# skip_package_ipa: false,
-			output_name: "#{XCODE_APP_SCHEME} #{get_version_string(XCODE_TARGET)}.ipa" # specify the name of the .ipa file to generate (including file extension)
-			# sdk: 'iOS 11.1'        # use SDK as the name or path of the base SDK when building the project.
+			output_name: "#{XCODE_APP_SCHEME} #{get_version_string}.ipa" # specify the name of the .ipa file to generate (including file extension)
 		)
 	end
 
 	desc 'Generate .app file'
 	lane :generate_app_file do
 		build_app(
-			workspace: XCODE_WORKSPACE,
-			# configuration: 'Debug',
-			scheme: XCODE_APP_SCHEME,
-			clean: true,
-			# silent: true,
-			# skip_package_ipa: true,
-			output_name: "#{XCODE_APP_SCHEME} #{get_version_string(XCODE_TARGET)}.app" # specify the name of the .ipa file to generate (including file extension)
-			# sdk: 'iOS 11.1'        # use SDK as the name or path of the base SDK when building the project.
+			output_name: "#{XCODE_APP_SCHEME} #{get_version_string}.app" # specify the name of the .ipa file to generate (including file extension)
 		)
 	end
 
@@ -304,7 +286,7 @@ platform :ios do
 
 	# error block is executed when a error occurs
 	error do |lane, exception, options|
-		version = get_version_string(XCODE_TARGET).to_s
+		version = get_version_string
 		subtitle = 'Fastlane Error!'
 		message = "Error deploying #{APP_NAME} #{version} build."
 		unless is_ci
@@ -327,14 +309,13 @@ platform :ios do
 
 	desc 'Post release'
 	lane :post_release do |options|
-		version_string = "#{get_version_number(target: options[:target])} (#{get_build_number})"
-		tag_string = "#{get_version_number(target: options[:target])}/#{get_build_number}"
+		version_string = get_version_string
+		tag_string = get_version_string(is_with_slash: true)
 		message = "Version Bump of \"#{APP_NAME}\" to #{version_string}"
 		commit_version_bump(
 			message: message,
 			xcodeproj: XCODE_PROJECT,
-			force: true,
-			ignore: /Gemfile.lock/ # Discard changes to Gemfile.lock (frozen option didn't work)
+			force: true
 		)
 		add_git_tag(build_number: tag_string)
 		push_to_git_remote

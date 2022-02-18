@@ -24,9 +24,9 @@ print-environment:
 
 clean: command-exists-bundle
 	bundle clean
-	bundle exec pod cache clean --all
-	bundle exec fastlane run clean_build_artifacts
-	bundle exec fastlane run clear_derived_data
+	bundle exec pod cache clean --all ${VERBOSE}
+	bundle exec fastlane run clean_build_artifacts ${VERBOSE}
+	bundle exec fastlane run clear_derived_data ${VERBOSE}
 
 install-dependencies: install-gems install-pods
 	@echo Finished installing dependencies ...

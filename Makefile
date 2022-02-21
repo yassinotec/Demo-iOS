@@ -93,13 +93,13 @@ generate-app-file: command-exists-bundle
 	@echo building ".app" file ...
 	bundle exec fastlane generate_app_file
 
-deploy: deploy-appstore deploy-next_generation
+deploy: deploy-app_store
 
 deploy-beta: deploy-build-beta
 
 deploy-next_generation: deploy-build-next_generation
 
-deploy-appstore: deploy-build-appstore
+deploy-app_store: deploy-build-app_store
 
 deploy-build-%: install-gems
 	@echo deploying app \(incrementing build for $(*)\) ...

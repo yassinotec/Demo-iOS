@@ -211,7 +211,8 @@ platform :ios do
 		build_type = options[:build_type] || DEFAULT_BUILD_TYPE
 		increment_version_with(build_type: build_type)
 
-		sync_code_signing(type: 'appstore', readonly: true) # shortcut is `match`
+		app_store_connect_api_key
+		sync_code_signing(type: 'appstore', readonly: is_ci) # shortcut is `match`
 		build_app # Build based on Gymfile values. Shortcut is `gym`.
 		subtitle = "Finished Building #{APP_NAME}"
 		message = 'Ready to upload...'

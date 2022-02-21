@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-ruby '~> 2.6.8'
+# ruby '~> 2.6.8'
 
 # Main gems
 gem 'cocoapods'

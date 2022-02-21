@@ -40,8 +40,8 @@ GIT_BRANCH = ENV['GIT_BRANCH']
 # Defaults
 ######################
 DEFAULT_XCODE_TARGET = XCODE_TARGET.freeze
-DEFAULT_BUILD_TYPE = 'build'
-DEFAULT_DEPLOY_ENVIRONMENT = :dev
+DEFAULT_BUILD_TYPE = 'build'.freeze
+DEFAULT_DEPLOY_ENVIRONMENT = :dev.freeze
 
 ######################
 # Variables
@@ -235,6 +235,12 @@ platform :ios do
 
 	desc 'Deploy Adhoc version of the app ...'
 	lane :adhoc do |options|
+		build_type = options[:build_type]
+		build(deploy_environment: :dev, build_type: build_type)
+	end
+
+	desc 'Deploy Next Generation version of the app ...'
+	lane :next_generation do |options|
 		build_type = options[:build_type]
 		build(deploy_environment: :dev, build_type: build_type)
 	end

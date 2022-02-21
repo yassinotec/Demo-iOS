@@ -93,29 +93,29 @@ generate-app-file: command-exists-bundle
 	@echo building ".app" file ...
 	bundle exec fastlane generate_app_file
 
-deploy: deploy-appstore
+deploy: deploy-appstore deploy-next_generation
 
 deploy-beta: deploy-build-beta
 
-deploy-next-generation: deploy-build-next-generation
+deploy-next_generation: deploy-build-next_generation
 
 deploy-appstore: deploy-build-appstore
 
 deploy-build-%: install-gems
 	@echo deploying app \(incrementing build for $(*)\) ...
-	bundle exec fastlane beta build_type:build --env $(*) ${VERBOSE}
+	bundle exec fastlane $(*) build_type:build --env $(*) ${VERBOSE}
 
 deploy-patch-%: install-gems
 	@echo deploying app \(incrementing patch\) ...
-	bundle exec fastlane beta build_type:patch --env $(*) ${VERBOSE}
+	bundle exec fastlane $(*) build_type:patch --env $(*) ${VERBOSE}
 
 deploy-minor-%: install-gems
 	@echo deploying app \(incrementing minor\) ...
-	bundle exec fastlane beta build_type:minor --env $(*) ${VERBOSE}
+	bundle exec fastlane $(*) build_type:minor --env $(*) ${VERBOSE}
 
 deploy-major-%: install-gems
 	@echo deploying app \(incrementing major\) ...
-	bundle exec fastlane beta build_type:major --env $(*) ${VERBOSE}
+	bundle exec fastlane $(*) build_type:major --env $(*) ${VERBOSE}
 
 increment_build_number:
 	@echo Incrementing build number app ...

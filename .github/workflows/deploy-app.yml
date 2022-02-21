@@ -3,10 +3,10 @@ name: Deploy App
 on:
   push:
     branches:
-      - main
+      - develop
   pull_request:
     branches:
-      - main
+      - develop
 
 jobs:
   build:
@@ -33,15 +33,15 @@ jobs:
           mkdir -p "${SSH_PATH}"
           touch "${SSH_PATH}/known_hosts"
 
-          echo "${PRIVATE_KEY}" > "${SSH_PATH}/id_rsa"
+          echo "${PRIVATE_KEY}" > "${SSH_PATH}/id_ed25519"
 
           chmod 700 "${SSH_PATH}"
           ssh-keyscan github.com >> ~/.ssh/known_hosts
           chmod 600 "${SSH_PATH}/known_hosts"
-          chmod 600 "${SSH_PATH}/id_rsa"
+          chmod 600 "${SSH_PATH}/id_ed25519"
 
           eval $(ssh-agent)
-          ssh-add "${SSH_PATH}/id_rsa"
+          ssh-add "${SSH_PATH}/id_ed25519"
         env:
           PRIVATE_KEY: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
 
@@ -65,6 +65,7 @@ jobs:
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY }}
           APP_STORE_CONNECT_API_KEY_DURATION: ${{ secrets.APP_STORE_CONNECT_API_KEY_DURATION }}
+          MATCH_GIT_PRIVATE_KEY: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           PILOT_DISTRIBUTE_EXTERNAL: ${{ secrets.PILOT_DISTRIBUTE_EXTERNAL }}
           PILOT_SKIP_SUBMISSION: ${{ secrets.PILOT_SKIP_SUBMISSION }}

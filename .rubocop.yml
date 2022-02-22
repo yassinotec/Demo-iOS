@@ -2,6 +2,13 @@ inherit_from: .rubocop_todo.yml
 
 AllCops:
   NewCops: enable
+  Exclude:
+    - ".git/**/*"
+    - ".build/**/*"
+    - "node_modules/**/*"
+    - "Packages/**/*"
+    - "vendor/**/*"
+    - "tmp/**/*"
 Layout/IndentationStyle:
   EnforcedStyle: tabs
 Layout/IndentationWidth:
@@ -129,3 +136,5 @@ Layout/FirstArrayElementIndentation:
 Style/NumericLiterals:
   MinDigits: 10
   Strict: true
+Style/HashSyntax:
+  Enabled: false

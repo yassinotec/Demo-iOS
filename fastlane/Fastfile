@@ -18,30 +18,29 @@
 # Enable the following line if normal app binary upload fails.
 # ENV['DELIVER_ITMSTRANSPORTER_ADDITIONAL_UPLOAD_PARAMETERS'] = '-t DAV'
 
-default_platform(:ios)
+default_platform :ios
 
 ######################
 # Constants
 ######################
 
 # #app channel webhook
-default_slack_channel = '#ios-notifications'
+DEFAULT_SLACK_CHANNEL = '#ios-notifications'
 # #sandbox channel webhook
 # SLACK_URL = ENV['SLACK_URL'].freeze	# See Slack Incoming Webhook
 APP_NAME = ENV['APP_NAME'].freeze
-XCODE_WORKSPACE = "#{ENV['XCODE_WORKSPACE']}.xcworkspace"
+XCODE_WORKSPACE = ENV['XCODE_WORKSPACE'].freeze
 XCODE_PROJECT = ENV['XCODE_PROJECT'].freeze
-XCODE_UITESTS_SCHEME = ENV['XCODE_UITESTS_SCHEME'].freeze
-XCODE_APP_SCHEME = ENV['XCODE_SCHEME'].freeze
+XCODE_SCHEME = ENV['XCODE_SCHEME'].freeze
 XCODE_TARGET = ENV['XCODE_TARGET'].freeze
-GIT_BRANCH = ENV['GIT_BRANCH']
+GIT_BRANCH = ENV['GIT_BRANCH'].freeze
 
 ######################
 # Defaults
 ######################
 DEFAULT_XCODE_TARGET = XCODE_TARGET.freeze
-DEFAULT_BUILD_TYPE = 'build'.freeze
-DEFAULT_DEPLOY_ENVIRONMENT = :dev.freeze
+DEFAULT_BUILD_TYPE = 'build'
+DEFAULT_DEPLOY_ENVIRONMENT = :dev
 
 ######################
 # Variables
@@ -55,9 +54,10 @@ DEPLOY_ENVIRONMENT = DEFAULT_DEPLOY_ENVIRONMENT
 platform :ios do
 	before_all do
 		# Set enviroment variables
-		ENV['SCAN_SLACK_CHANNEL'] ||= default_slack_channel
+		ENV['SCAN_SLACK_CHANNEL'] ||= DEFAULT_SLACK_CHANNEL
 		ENV['FL_BUILD_NUMBER_PROJECT'] ||= XCODE_PROJECT
-		# setup_circle_ci if ENV['IS_CIRCLECI']
+		ENV['SNAPSHOT_PROJECT'] ||= XCODE_PROJECT
+		ENV['SNAPSHOT_WORKSPACE'] ||= XCODE_WORKSPACE
 		setup_ci if is_ci
 	end
 
@@ -67,10 +67,7 @@ platform :ios do
 
 	desc 'Generate new localized screenshots'
 	lane :screenshots do
-		capture_screenshots(
-			workspace: XCODE_WORKSPACE,
-			scheme: XCODE_UITESTS_SCHEME
-		)
+		capture_screenshots
 	end
 
 	desc 'Create iOS app online'
@@ -146,7 +143,8 @@ platform :ios do
 		build_type = options[:build_type] || DEFAULT_BUILD_TYPE
 		case build_type
 		when 'build'
-			increment_build_number
+			app_store_connect_api_key
+			increment_build_number({ build_number: latest_testflight_build_number + 1 })
 		else
 			increment_version_number(bump_type: build_type)
 			increment_build_number(build_number: '0')
@@ -273,14 +271,14 @@ platform :ios do
 	desc 'Generate .ipa file'
 	lane :generate_ipa_file do
 		build_app(
-			output_name: "#{XCODE_APP_SCHEME} #{get_version_string}.ipa" # specify the name of the .ipa file to generate (including file extension)
+			output_name: "#{XCODE_SCHEME} #{get_version_string}.ipa" # specify the name of the .ipa file to generate (including file extension)
 		)
 	end
 
 	desc 'Generate .app file'
 	lane :generate_app_file do
 		build_app(
-			output_name: "#{XCODE_APP_SCHEME} #{get_version_string}.app" # specify the name of the .ipa file to generate (including file extension)
+			output_name: "#{XCODE_SCHEME} #{get_version_string}.app" # specify the name of the .ipa file to generate (including file extension)
 		)
 	end
 
@@ -325,7 +323,7 @@ platform :ios do
 			force: true
 		)
 		add_git_tag(build_number: tag_string)
-		push_to_git_remote
+		push_to_git_remote(force_with_lease: true)
 	end
 
 	after_all do

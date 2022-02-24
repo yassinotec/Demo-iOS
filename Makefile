@@ -36,7 +36,7 @@ install-gems: command-exists-bundle
 	gem update bundler ${VERBOSE}
 	@echo Installing gems ...
 	# Set local gem installation to main gems only
-ifdef CI
+ifdef CI # GitHub Actions uses this environment variable
 	@echo Configure Bundler for CI ...
 	bundle config unset --local clean
 	bundle config set --local without development
@@ -93,7 +93,7 @@ generate-app-file: command-exists-bundle
 	@echo building ".app" file ...
 	bundle exec fastlane generate_app_file
 
-deploy: deploy-app_store
+deploy: deploy-beta deploy-app_store
 
 deploy-beta: deploy-build-beta
 

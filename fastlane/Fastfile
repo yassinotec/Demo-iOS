@@ -185,7 +185,7 @@ platform :ios do
 		# 	force: true,
 		# 	skip_clean: true
 		# )
-		# git_pull
+		git_pull unless is_ci
 	end
 
 	# Main lane for building and deploying the app to TestFlight
@@ -319,7 +319,6 @@ platform :ios do
 		message = "Version Bump of \"#{APP_NAME}\" to #{version_string}"
 		commit_version_bump(
 			message: message,
-			xcodeproj: XCODE_PROJECT,
 			force: true
 		)
 		add_git_tag(build_number: tag_string)

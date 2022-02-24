@@ -11,10 +11,12 @@ gem 'fastlane'
 # Development gems
 group :development do
 	gem 'danger'
+	gem 'debase', '>= 0.2.5.beta2'
 	gem 'jazzy'
 	gem 'linterbot'
 	gem 'reek'
 	gem 'rubocop'
+	gem 'ruby-debug-ide'
 	gem 'solargraph'
 	gem 'xcodeproj'
 	gem 'xcpretty'

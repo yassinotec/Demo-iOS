@@ -55,6 +55,14 @@ Deploy Beta version of the app ...
 
 Deploy Adhoc version of the app ...
 
+### ios next_generation
+
+```sh
+[bundle exec] fastlane ios next_generation
+```
+
+Deploy Next Generation version of the app ...
+
 ### ios app_store
 
 ```sh

@@ -144,7 +144,7 @@ platform :ios do
 		case build_type
 		when 'build'
 			app_store_connect_api_key
-			increment_build_number({ build_number: latest_testflight_build_number + 1 })
+			increment_build_number # ({ build_number: latest_testflight_build_number + 1 })
 		else
 			increment_version_number(bump_type: build_type)
 			increment_build_number(build_number: '0')
